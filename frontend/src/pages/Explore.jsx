@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import api from "../services/api";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
@@ -37,7 +38,7 @@ function Explore() {
         setEvents(eventResponse.data.events || eventResponse.data);
       } catch (error) {
         console.error(error);
-        import("react-hot-toast").then(({ toast }) => toast.error("Failed to load data"));
+        toast.error("Failed to load data");
       } finally {
         setIsLoading(false);
       }
