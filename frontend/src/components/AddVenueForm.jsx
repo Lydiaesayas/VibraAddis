@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import API from '../services/api';
+import api from '../services/api';
 
 function AddVenueForm({ onVenueAdded }) {
     const [formData, setFormData] = useState({
@@ -48,7 +48,7 @@ function AddVenueForm({ onVenueAdded }) {
                 data.append('image', formData.image);
             }
 
-            const response = await API.post('/venues', data, {
+            const response = await api.post('/venues', data, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }

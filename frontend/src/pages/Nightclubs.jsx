@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import API from "../services/api";
+import api from "../services/api";
 import nightclubImg from "../assets/images/nightclub.jpg";
 import VenueCard from "../components/VenueCard";
 import { Helmet } from "react-helmet-async";
@@ -11,11 +11,11 @@ function Nightclubs() {
   useEffect(() => {
     const fetchNightclubs = async () => {
       try {
-        const response = await API.get("/venues?category=nightclub&limit=100");
+        const response = await api.get("/venues?category=nightclub&limit=100");
         const venuesData = response.data.venues || response.data;
         setVenues(venuesData);
       } catch (error) {
-        console.log(error);
+        console.error(error);
       } finally {
         setLoading(false);
       }

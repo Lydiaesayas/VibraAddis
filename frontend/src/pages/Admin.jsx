@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import API from "../services/api";
+import api from "../services/api";
 import AddVenueForm from "../components/AddVenueForm";
 
 function Admin() {
@@ -14,7 +14,7 @@ function Admin() {
     const fetchVenues = useCallback(async () => {
         try {
             setLoading(true);
-            const response = await API.get("/venues");
+            const response = await api.get("/venues");
             setVenues(response.data.venues || response.data);
             setError("");
         } catch (err) {
@@ -56,7 +56,7 @@ function Admin() {
 
     const handleVenueDeleted = async (id) => {
         try {
-            await API.delete(`/venues/${id}`);
+            await api.delete(`/venues/${id}`);
             setVenues(
             venues.filter(venue => venue._id !== id));
         } catch (error) {
@@ -71,7 +71,7 @@ function Admin() {
              venue.name);
         if (!newName) return;
         try {            
-            const response = await API.put(`/venues/${venue._id}`, 
+            const response = await api.put(`/venues/${venue._id}`, 
                 {
                 ...venue,
                 name: newName

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import API from "../services/api";
+import api from "../services/api";
 import VenueCard from "../components/VenueCard";
 import { useFavorites } from "../hooks/useFavorites";
 import { Helmet } from "react-helmet-async";
@@ -18,7 +18,7 @@ function Favorites() {
       }
       try {
         setLoading(true);
-        const response = await API.get(`/venues?ids=${favorites.join(",")}&limit=${favorites.length}`);
+        const response = await api.get(`/venues?ids=${favorites.join(",")}&limit=${favorites.length}`);
         const venuesData = response.data.venues || response.data;
         setVenues(venuesData);
       } catch (error) {

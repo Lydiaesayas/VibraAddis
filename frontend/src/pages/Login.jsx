@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import API from "../services/api"
+import api from "../services/api"
 
 function Login() {
 
@@ -16,9 +16,7 @@ function Login() {
         setError("")
         setLoading(true)
         try {
-            console.log("logging in with:", { email, password })
-            const response = await API.post("/auth/login", { email, password })
-            console.log("Login response:", response.data)
+            const response = await api.post("/auth/login", { email, password })
 
             const token = response.data.token ||
                 response.data.data?.token ||
@@ -30,10 +28,8 @@ function Login() {
             }
 
             localStorage.setItem("token", token)
-            console.log("Token saved successfully")
 
             setTimeout(() => {
-                console.log("Navigating to /admin")
                 navigate("/admin")
             }, 100)
         } catch (error) {

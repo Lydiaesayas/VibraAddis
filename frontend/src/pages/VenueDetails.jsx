@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import API from "../services/api";
+import api from "../services/api";
 import { motion, AnimatePresence } from "framer-motion";
 import VenueMap from "../components/VenueMap";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
@@ -41,10 +41,10 @@ function VenueDetails() {
   useEffect(() => {
     const fetchVenueAndReviews = async () => {
       try {
-        const venueRes = await API.get(`/venues/${id}`);
+        const venueRes = await api.get(`/venues/${id}`);
         setVenue(venueRes.data);
 
-        const reviewsRes = await API.get(`/reviews/${id}`);
+        const reviewsRes = await api.get(`/reviews/${id}`);
         setReviews(reviewsRes.data);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -60,8 +60,8 @@ function VenueDetails() {
     e.preventDefault();
     setSubmitting(true);
     try {
-      await API.post("/reviews", { ...formData, venueId: id });
-      const reviewsRes = await API.get(`/reviews/${id}`);
+      await api.post("/reviews", { ...formData, venueId: id });
+      const reviewsRes = await api .get(`/reviews/${id}`);
       setReviews(reviewsRes.data);
       setFormData({ userName: "", rating: 5, comment: "" });
     } catch (error) {
@@ -75,7 +75,7 @@ function VenueDetails() {
     e.preventDefault();
     setBookingSubmitting(true);
     try {
-      await API.post("/reservations", { ...bookingData, venue: id });
+      await api.post("/reservations", { ...bookingData, venue: id });
       setBookingRef("VIBRA-" + Math.random().toString(36).substr(2, 6).toUpperCase());
       setBookingSuccess(true);
       // We will leave the ticket open until they close it

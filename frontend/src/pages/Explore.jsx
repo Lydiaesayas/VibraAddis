@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import API from "../services/api";
+import api from "../services/api";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 
@@ -30,10 +30,10 @@ function Explore() {
         if (selectedCategory !== "all") queryParams.append("category", selectedCategory);
         if (minRating > 0) queryParams.append("rating", minRating);
 
-        const venueResponse = await API.get(`/venues?${queryParams.toString()}`);
+        const venueResponse = await api.get(`/venues?${queryParams.toString()}`);
         setVenues(venueResponse.data.venues || venueResponse.data);
 
-        const eventResponse = await API.get("/events");
+        const eventResponse = await api.get("/events");
         setEvents(eventResponse.data.events || eventResponse.data);
       } catch (error) {
         console.error(error);
