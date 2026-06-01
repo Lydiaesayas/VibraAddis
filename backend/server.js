@@ -22,7 +22,7 @@ const PORT = process.env.PORT || 5000;
 
 // ✅ CORS Configuration (with your frontend URLs)
 app.use(cors({
-  origin: ['http://localhost:3000', 'https://vibraaddis-1.onrender.com'],
+  origin: ['http://localhost:3000', 'http://localhost:5173', 'https://vibraaddis-1.onrender.com', 'https://vibraaddis-2.onrender.com'],
   credentials: true
 }));
 
