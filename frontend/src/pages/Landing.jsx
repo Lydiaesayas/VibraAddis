@@ -74,6 +74,14 @@ function Landing() {
           </Link>
 
           <Link
+            to="/list-your-venue"
+            className="group flex items-center justify-center gap-3 w-full px-8 py-4 rounded-2xl backdrop-blur-md bg-amber-500/10 border border-amber-500/30 hover:bg-amber-500/20 hover:border-amber-400/50 font-semibold text-lg transition-all duration-300"
+          >
+            <span className="text-xl" aria-hidden>🔑</span>
+            List Your Nightclub
+          </Link>
+
+          <Link
             to="/login"
             className="group flex items-center justify-center gap-3 w-full px-8 py-4 rounded-2xl backdrop-blur-md bg-white/5 border border-white/20 hover:bg-white/10 hover:border-purple-400/60 font-semibold text-lg transition-all duration-300"
           >

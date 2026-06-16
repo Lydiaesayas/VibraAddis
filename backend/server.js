@@ -20,9 +20,16 @@ connectDB();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// ✅ CORS Configuration (with your frontend URLs)
+// ✅ CORS Configuration (with your frontend and mobile Capacitor URLs)
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:5173', 'https://vibraaddis-1.onrender.com', 'https://vibraaddis-2.onrender.com'],
+  origin: [
+    'http://localhost:3000', 
+    'http://localhost:5173', 
+    'http://localhost', 
+    'capacitor://localhost', 
+    'https://vibraaddis-1.onrender.com', 
+    'https://vibraaddis-2.onrender.com'
+  ],
   credentials: true
 }));
 
@@ -47,6 +54,7 @@ app.use("/api/venues", venueRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/reservations", reservationRoutes);
+app.use("/api/subscriptions", require("./routes/subscriptionRoutes"));
 
 // Test routes
 app.get("/test", (req, res) => {

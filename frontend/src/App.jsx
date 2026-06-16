@@ -5,6 +5,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Admin from "./pages/Admin"
 import Login from "./pages/Login"
 import Navbar from './components/Navbar';
+import BottomNavbar from './components/BottomNavbar';
 import Landing from './pages/Landing';
 import About from './pages/About';
 import Explore from './pages/Explore';
@@ -12,6 +13,8 @@ import Nightclubs from './pages/Nightclubs';
 import Traditional from './pages/Traditional';    
 import VenueDetails from './pages/VenueDetails';
 import Favorites from './pages/Favorites';
+import Reels from './pages/Reels';
+import ListYourVenue from './pages/ListYourVenue';
 import ReactGA from "react-ga4";
 import usePageTracking from './hooks/usePageTracking';
 
@@ -23,18 +26,23 @@ function AppContent() {
   const location = useLocation();
   const isAuthRoute = location.pathname === "/login" || location.pathname === "/admin";
   const isLandingRoute = location.pathname === "/";
-  const hideNavbar = isAuthRoute || isLandingRoute;
-  const mainClass = hideNavbar ? "" : "pt-20";
+  const isReelsRoute = location.pathname === "/reels";
+
+  const hideTopNavbar = isAuthRoute || isLandingRoute || isReelsRoute;
+  const hideBottomNavbar = isAuthRoute || isLandingRoute;
+  const mainClass = hideTopNavbar ? "" : "pt-20";
 
   return (
-    <div className="min-h-screen bg-zinc-950">
+    <div className="min-h-screen bg-zinc-950 pb-16 md:pb-0">
       <Toaster position="top-center" />
-      {!hideNavbar && <Navbar />}
+      {!hideTopNavbar && <Navbar />}
       <main className={mainClass}>
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/about" element={<About />} />
           <Route path="/explore" element={<Explore />} />
+          <Route path="/reels" element={<Reels />} />
+          <Route path="/list-your-venue" element={<ListYourVenue />} />
           <Route path="/nightclubs" element={<Nightclubs />} />
           <Route path="/traditional" element={<Traditional />} />
           <Route path="/favorites" element={<Favorites />} />
@@ -47,6 +55,7 @@ function AppContent() {
           } />
         </Routes>
       </main>
+      {!hideBottomNavbar && <BottomNavbar />}
     </div>
   );
 }

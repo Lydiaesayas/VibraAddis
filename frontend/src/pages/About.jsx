@@ -44,9 +44,9 @@ function About() {
             <h2 className="text-xl font-bold text-white mb-2">📅 Events & favorites</h2>
             <p>See upcoming events, save venues you love, and share places with friends.</p>
           </div>
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
-            <h2 className="text-xl font-bold text-white mb-2">🛡️ For venue owners</h2>
-            <p>Admins can log in to manage venues, events, and reservations from the dashboard.</p>
+          <div className="bg-zinc-900 border border-amber-500/20 rounded-2xl p-6">
+            <h2 className="text-xl font-bold text-amber-400 mb-2">🔑 For nightclub owners</h2>
+            <p>Nightclubs must subscribe to be listed on VibraAddis. Choose a plan from Spotlight to VIP FOMO and reach thousands of nightlife seekers.</p>
           </div>
         </div>
 
@@ -56,6 +56,12 @@ function About() {
             className="px-8 py-4 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 font-bold text-lg transition-all"
           >
             Start Exploring
+          </Link>
+          <Link
+            to="/list-your-venue"
+            className="px-8 py-4 rounded-full bg-gradient-to-r from-amber-500 to-yellow-600 text-black font-bold text-lg transition-all hover:from-amber-400"
+          >
+            List Your Nightclub
           </Link>
           <Link
             to="/"

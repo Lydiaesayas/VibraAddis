@@ -54,6 +54,29 @@ const venueSchema = new mongoose.Schema(
             type: [String],
             default: [],
         },
+        socialPosts: [{
+            platform: { type: String, enum: ['instagram', 'tiktok', 'facebook', 'unknown'] },
+            type: { type: String, enum: ['reel', 'post', 'story', 'video', 'link'] },
+            url: String,
+            externalId: String,
+        }],
+        instagramHandle: String,
+        tiktokHandle: String,
+        listingStatus: {
+            type: String,
+            enum: ['pending', 'active', 'expired', 'suspended'],
+            default: 'active',
+        },
+        subscriptionPlan: {
+            type: String,
+            enum: ['spotlight', 'campaign', 'celebrity', 'signature', 'content', 'fomo', 'none'],
+            default: 'spotlight',
+        },
+        isPublished: {
+            type: Boolean,
+            default: true,
+        },
+        listingExpiresAt: Date,
     },
     {
         timestamps: true,

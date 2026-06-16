@@ -1,12 +1,70 @@
 const Venue = require('../models/Venue');
 
+// @desc    Get all venues for admin (includes unpublished)
+// @route   GET /api/venues/admin/all
+// @access  Private
+const getAllVenuesAdmin = async (req, res, next) => {
+    try {
+        const venues = await Venue.find().sort({ createdAt: -1 });
+        res.json({ venues, total: venues.length });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// @desc    Get reels feed (social posts from published venues)
+// @route   GET /api/venues/reels/feed
+// @access  Public
+const getReelsFeed = async (req, res, next) => {
+    try {
+        const venues = await Venue.find({
+            isPublished: true,
+            listingStatus: 'active',
+            'socialPosts.0': { $exists: true },
+        }).select('name category location rating description image socialPosts subscriptionPlan');
+
+        const feed = [];
+        const seen = new Set();
+
+        venues.forEach((venue) => {
+            venue.socialPosts.forEach((post) => {
+                const key = `${post.platform}:${post.externalId}`;
+                if (seen.has(key)) return;
+                seen.add(key);
+
+                feed.push({
+                    _id: `${venue._id}-${post.externalId}`,
+                    venueId: venue._id,
+                    venueName: venue.name,
+                    category: venue.category,
+                    location: venue.location,
+                    rating: venue.rating,
+                    description: venue.description,
+                    image: venue.image,
+                    platform: post.platform,
+                    type: post.type,
+                    url: post.url,
+                    externalId: post.externalId,
+                });
+            });
+        });
+
+        res.json(feed);
+    } catch (error) {
+        next(error);
+    }
+};
+
 // @desc    Get all venues
 // @route   GET /api/venues
 // @access  Public
 const getVenues = async (req, res, next) => {
     try {
         const { search, category, rating, page = 1, limit = 10, ids } = req.query;
-        let query = {};
+        let query = {
+            isPublished: true,
+            listingStatus: 'active',
+        };
 
         // Filter by specific IDs
         if (ids) {
@@ -142,7 +200,9 @@ const deleteVenue = async (req, res, next) => {
 
 module.exports = {
     getVenues,
+    getAllVenuesAdmin,
     getVenueById,
+    getReelsFeed,
     createVenue,
     updateVenue,
     deleteVenue

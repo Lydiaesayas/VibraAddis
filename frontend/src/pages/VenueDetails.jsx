@@ -425,6 +425,30 @@ function VenueDetails() {
               </form>
             </div>
 
+            {/* VENUE SOCIAL REELS */}
+            {venue.socialPosts?.length > 0 && (
+              <div className="bg-zinc-900/50 p-8 rounded-[2.5rem] border border-zinc-800">
+                <h3 className="text-xl font-bold mb-4 text-white">Social Reels & Posts</h3>
+                <div className="grid sm:grid-cols-2 gap-3">
+                  {venue.socialPosts.map((post) => (
+                    <a
+                      key={post.externalId}
+                      href={post.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-3 bg-zinc-950 border border-zinc-800 hover:border-purple-500 rounded-2xl p-4 transition-all"
+                    >
+                      <span className="text-2xl">{post.platform === "tiktok" ? "🎵" : "📸"}</span>
+                      <div>
+                        <p className="font-bold text-sm capitalize">{post.platform} {post.type}</p>
+                        <p className="text-zinc-500 text-xs truncate">Watch on {post.platform}</p>
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* SOCIAL SHARING */}
             <div className="bg-zinc-900/30 p-8 rounded-[2.5rem] border border-zinc-800 text-center">
               <h3 className="text-xl font-bold mb-4 text-white">Share the Vibe</h3>

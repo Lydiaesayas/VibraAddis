@@ -9,12 +9,32 @@ function Admin() {
     const [error, setError] = useState("");
     const [search, setSearch] = useState("");
     const [showAddForm, setShowAddForm] = useState(false);
+    const [subscriptions, setSubscriptions] = useState([]);
     const navigate = useNavigate();
+
+    const fetchSubscriptions = useCallback(async () => {
+        try {
+            const response = await api.get("/subscriptions");
+            setSubscriptions(response.data);
+        } catch (err) {
+            console.error("Failed to load subscriptions", err);
+        }
+    }, []);
+
+    const handleApproveSubscription = async (id) => {
+        try {
+            await api.patch(`/subscriptions/${id}`, { status: "active" });
+            fetchSubscriptions();
+            fetchVenues();
+        } catch {
+            alert("Failed to approve subscription");
+        }
+    };
 
     const fetchVenues = useCallback(async () => {
         try {
             setLoading(true);
-            const response = await api.get("/venues");
+            const response = await api.get("/venues/admin/all");
             setVenues(response.data.venues || response.data);
             setError("");
         } catch (err) {
@@ -37,7 +57,8 @@ function Admin() {
         }
         // eslint-disable-next-line react-hooks/set-state-in-effect
         fetchVenues();
-    }, [navigate, fetchVenues]);
+        fetchSubscriptions();
+    }, [navigate, fetchVenues, fetchSubscriptions]);
 
     const handleLogout = () => {
         localStorage.removeItem("token");
@@ -165,6 +186,8 @@ function Admin() {
                                     <th className="p-5">Category</th>
                                     <th className="p-5">Location</th>
                                     <th className="p-5">Rating</th>
+                                    <th className="p-5">Plan</th>
+                                    <th className="p-5">Status</th>
                                     <th className="p-5">Actions</th>
                                 </tr>
                             </thead>
@@ -184,6 +207,12 @@ function Admin() {
                                         </td>
                                         <td className="p-5">
                                             {venue.rating}
+                                        </td>
+                                        <td className="p-5 capitalize">
+                                            {venue.subscriptionPlan || "—"}
+                                        </td>
+                                        <td className="p-5 capitalize">
+                                            {venue.listingStatus || "—"}
                                         </td>
                                      
                                         <td className="p-5 flex gap-3">
@@ -206,6 +235,50 @@ function Admin() {
                         </table>
                     </div>
                 
+                    )}
+                 </div>
+
+                 <div className="bg-zinc-900 rounded-3xl border border-amber-500/20 p-6 mt-10 overflow-hidden">
+                    <h2 className="text-2xl font-bold mb-6 text-amber-400">Listing Subscription Requests</h2>
+                    {subscriptions.length === 0 ? (
+                        <p className="text-gray-400 text-center py-8">No subscription requests yet.</p>
+                    ) : (
+                        <div className="overflow-x-auto">
+                            <table className="w-full">
+                                <thead className="bg-zinc-800 text-left">
+                                    <tr>
+                                        <th className="p-4">Venue</th>
+                                        <th className="p-4">Contact</th>
+                                        <th className="p-4">Plan</th>
+                                        <th className="p-4">Status</th>
+                                        <th className="p-4">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {subscriptions.map((sub) => (
+                                        <tr key={sub._id} className="border-t border-zinc-800">
+                                            <td className="p-4">{sub.venueName}</td>
+                                            <td className="p-4">
+                                                <div>{sub.contactName}</div>
+                                                <div className="text-xs text-zinc-500">{sub.email}</div>
+                                            </td>
+                                            <td className="p-4 capitalize">{sub.planId}</td>
+                                            <td className="p-4 capitalize">{sub.status}</td>
+                                            <td className="p-4">
+                                                {sub.status === "pending" && (
+                                                    <button
+                                                        onClick={() => handleApproveSubscription(sub._id)}
+                                                        className="bg-amber-500 text-black text-sm py-2 px-4 rounded-xl font-bold hover:bg-amber-400"
+                                                    >
+                                                        Approve & List
+                                                    </button>
+                                                )}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     )}
                  </div>
             </div>

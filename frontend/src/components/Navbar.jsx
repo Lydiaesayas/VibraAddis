@@ -1,35 +1,10 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-
-import logoVideo from "../assets/videos/vibra-addis-logo.mp4";
+import LogoMark from './LogoMark';
 
 function Navbar() {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const navLogoRef = useRef(null);
-
-  // Force-play navbar logo video on mobile
-  useEffect(() => {
-    const video = navLogoRef.current;
-    if (!video) return;
-    const tryPlay = () => {
-      const p = video.play();
-      if (p !== undefined) {
-        p.catch(() => {
-          const retry = () => {
-            video.play().catch(() => {});
-            document.removeEventListener("touchstart", retry);
-            document.removeEventListener("click", retry);
-          };
-          document.addEventListener("touchstart", retry, { once: true });
-          document.addEventListener("click", retry, { once: true });
-        });
-      }
-    };
-    tryPlay();
-    video.addEventListener("loadeddata", tryPlay);
-    return () => video.removeEventListener("loadeddata", tryPlay);
-  }, []);
 
   // Close mobile menu on route change
   useEffect(() => {
@@ -65,9 +40,11 @@ function Navbar() {
   const navLinks = [
     { path: "/about", label: "About" },
     { path: "/explore", label: "Explore" },
+    { path: "/reels", label: "Reels" },
     { path: "/nightclubs", label: "Nightclubs" },
     { path: "/traditional", label: "Traditional" },
     { path: "/favorites", label: "Favorites" },
+    { path: "/list-your-venue", label: "List Venue" },
   ];
 
   return (  
@@ -78,17 +55,7 @@ function Navbar() {
         <Link to="/" className="flex items-center gap-2 group shrink-0">
           <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-purple-600 via-fuchsia-500 to-amber-400 p-[2px] group-hover:shadow-[0_0_15px_rgba(168,85,247,0.6)] transition-all duration-300 overflow-hidden">
             <div className="w-full h-full rounded-full bg-zinc-950 flex items-center justify-center overflow-hidden">
-              <video
-                ref={navLogoRef}
-                src={logoVideo}
-                autoPlay
-                loop
-                muted
-                playsInline
-                preload="auto"
-                className="w-full h-full object-cover"
-                style={{ WebkitTransform: 'translateZ(0)' }}
-              />
+              <LogoMark className="w-full h-full" />
             </div>
           </div>
           <h1 className="text-xl sm:text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400 group-hover:to-purple-400 transition-all duration-300">
