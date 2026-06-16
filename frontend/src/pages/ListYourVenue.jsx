@@ -3,7 +3,91 @@ import { Helmet } from "react-helmet-async";
 import api from "../services/api";
 import toast from "react-hot-toast";
 
-/* ─── Plan icons as inline SVGs ─────────────────────────── */
+/* ─── Hardcoded plans — renders instantly, API enriches if available ───── */
+const FALLBACK_PLANS = [
+  {
+    id: "spotlight",
+    step: 1,
+    title: "Spotlight Listing",
+    tagline: "Get on the map",
+    price: "15,000 ETB / month",
+    features: [
+      "Venue profile on VibraAddis",
+      "Search & category placement",
+      "Basic photo gallery",
+      "Customer reviews enabled",
+    ],
+  },
+  {
+    id: "campaign",
+    step: 2,
+    title: "2-Week Campaign",
+    tagline: "Turn one night into two weeks of hype",
+    price: "35,000 ETB / event",
+    features: [
+      "Everything in Spotlight",
+      "10-day teaser countdown",
+      "5-day aggressive reels push",
+      "2-day urgency & FOMO posts",
+      "Event-night live coverage",
+    ],
+  },
+  {
+    id: "celebrity",
+    step: 3,
+    title: "Celebrity Night Branding",
+    tagline: "Host the biggest nights in Addis",
+    price: "50,000 ETB / month",
+    features: [
+      "Featured homepage placement",
+      "Celebrity night promotion",
+      "Priority explore ranking",
+      "Brand story on About page",
+    ],
+  },
+  {
+    id: "signature",
+    step: 4,
+    title: "Signature Events",
+    tagline: "Build recurring iconic nights",
+    price: "40,000 ETB / month",
+    features: [
+      "Custom event series branding",
+      "Weekly event calendar slots",
+      "Push notifications to favorites",
+      "Signature night badges",
+    ],
+  },
+  {
+    id: "content",
+    step: 5,
+    title: "Cinematic Content",
+    tagline: "20–40 content pieces per night",
+    price: "60,000 ETB / night",
+    features: [
+      "Professional videographer",
+      "Reel creator on-site",
+      "Photographer coverage",
+      "Content uploaded to your profile",
+    ],
+  },
+  {
+    id: "fomo",
+    step: 6,
+    title: "VIP FOMO Package",
+    tagline: "Everyone important was there — except me",
+    price: "85,000 ETB / month",
+    features: [
+      "Full strategy from steps 1–5",
+      "Viral moment planning",
+      "VIP birthday & bottle show promos",
+      "Reels feed priority + social push",
+      "Dedicated account manager",
+    ],
+  },
+];
+
+/* ─── Plan icons ──────────────────────────────────────────────────────── */
 const icons = {
   spotlight: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-6 h-6">
@@ -47,39 +131,32 @@ const stats = [
   { value: "24hr", label: "Response Time" },
 ];
 
+/* ─── Plan Card ─────────────────────────────────────────────────────────── */
 function PlanCard({ plan, selected, onClick }) {
   const isPopular = plan.id === POPULAR_PLAN;
   return (
     <button
       type="button"
+      id={`plan-${plan.id}`}
       onClick={() => onClick(plan.id)}
-      className={`relative text-left rounded-3xl border p-6 transition-all duration-300 group ${
+      className={`relative text-left rounded-3xl border p-6 transition-all duration-300 group cursor-pointer ${
         selected
           ? "border-amber-400 bg-gradient-to-b from-amber-500/15 to-amber-900/10 shadow-[0_0_40px_rgba(245,158,11,0.2)]"
           : "border-zinc-800 bg-zinc-900/50 hover:border-amber-500/40 hover:bg-zinc-900/80"
       }`}
     >
-      {/* Most Popular badge */}
       {isPopular && (
-        <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-amber-400 to-yellow-500 text-black text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full shadow-lg">
-          Most Popular
+        <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-amber-400 to-yellow-500 text-black text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full shadow-lg whitespace-nowrap">
+          ⭐ Most Popular
         </span>
       )}
 
       <div className="flex items-start justify-between mb-4 mt-1">
-        <span
-          className={`font-black text-3xl transition-colors ${
-            selected ? "text-amber-400" : "text-zinc-500 group-hover:text-amber-500/60"
-          }`}
-        >
+        <span className={`font-black text-3xl transition-colors ${selected ? "text-amber-400" : "text-zinc-500 group-hover:text-amber-500/60"}`}>
           {plan.step}
         </span>
-        <span
-          className={`transition-colors ${
-            selected ? "text-amber-400" : "text-zinc-500 group-hover:text-amber-500/60"
-          }`}
-        >
-          {icons[plan.id] || icons.spotlight}
+        <span className={`transition-colors ${selected ? "text-amber-400" : "text-zinc-500 group-hover:text-amber-500/60"}`}>
+          {icons[plan.id]}
         </span>
       </div>
 
@@ -98,19 +175,18 @@ function PlanCard({ plan, selected, onClick }) {
 
       {selected && (
         <div className="mt-4 pt-4 border-t border-amber-500/20">
-          <span className="text-amber-400 text-xs font-bold uppercase tracking-widest">
-            ✓ Selected
-          </span>
+          <span className="text-amber-400 text-xs font-bold uppercase tracking-widest">✓ Selected</span>
         </div>
       )}
     </button>
   );
 }
 
+/* ─── Main Page ─────────────────────────────────────────────────────────── */
 function ListYourVenue() {
-  const [plans, setPlans] = useState([]);
+  // Start with fallback plans immediately — no loading flash
+  const [plans, setPlans] = useState(FALLBACK_PLANS);
   const [selectedPlan, setSelectedPlan] = useState("spotlight");
-  const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [form, setForm] = useState({
@@ -121,12 +197,16 @@ function ListYourVenue() {
     message: "",
   });
 
+  // Try to enrich from API — silently falls back if backend is sleeping
   useEffect(() => {
     api
       .get("/subscriptions/plans")
-      .then((res) => setPlans(res.data))
-      .catch(() => toast.error("Could not load subscription plans"))
-      .finally(() => setLoading(false));
+      .then((res) => {
+        if (res.data && res.data.length > 0) setPlans(res.data);
+      })
+      .catch(() => {
+        // Silently keep fallback plans — no error toast
+      });
   }, []);
 
   const selectedPlanData = plans.find((p) => p.id === selectedPlan);
@@ -139,7 +219,7 @@ function ListYourVenue() {
       setSubmitted(true);
       toast.success("Request sent! We'll contact you within 24 hours.");
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to submit request");
+      toast.error(error.response?.data?.message || "Failed to submit. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -158,12 +238,11 @@ function ListYourVenue() {
         />
       </Helmet>
 
-      {/* ── Hero ───────────────────────────────────────────────── */}
+      {/* ── Hero ─────────────────────────────────────────────────────────── */}
       <section className="relative overflow-hidden">
-        {/* Background blobs */}
         <div className="absolute inset-0 bg-gradient-to-br from-black via-zinc-950 to-black" />
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-amber-500/10 rounded-full blur-[100px] pointer-events-none" />
-        <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-yellow-600/10 rounded-full blur-[80px] pointer-events-none" />
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-amber-500/10 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-yellow-600/8 rounded-full blur-[100px] pointer-events-none" />
 
         <div className="relative max-w-5xl mx-auto px-6 pt-20 pb-16 text-center">
           <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/30 rounded-full px-4 py-1.5 text-amber-300 text-xs font-bold uppercase tracking-widest mb-6">
@@ -181,8 +260,8 @@ function ListYourVenue() {
             Join Addis Ababa's premier nightlife discovery platform. Strategic promotion that fills your venue every night.
           </p>
 
-          {/* Stats row */}
-          <div className="flex justify-center gap-8 md:gap-16">
+          {/* Stats */}
+          <div className="flex justify-center gap-8 md:gap-16 mb-6">
             {stats.map((s) => (
               <div key={s.label} className="text-center">
                 <div className="text-3xl font-black text-amber-400">{s.value}</div>
@@ -190,59 +269,63 @@ function ListYourVenue() {
               </div>
             ))}
           </div>
+
+          {/* Quick scroll CTA */}
+          <a
+            href="#request-form"
+            className="inline-flex items-center gap-2 mt-2 px-6 py-3 rounded-full bg-gradient-to-r from-amber-500 to-yellow-600 text-black font-black text-sm hover:from-amber-400 transition-all"
+          >
+            Request Your Listing →
+          </a>
         </div>
       </section>
 
-      {/* ── Plans Grid ──────────────────────────────────────────── */}
+      {/* ── Plans Grid ───────────────────────────────────────────────────── */}
       <section className="max-w-7xl mx-auto px-6 py-12">
         <div className="text-center mb-10">
           <h2 className="text-2xl md:text-3xl font-black text-white mb-2">Choose Your Plan</h2>
-          <p className="text-zinc-500 text-sm">Select a plan, then fill in the form below to get started.</p>
+          <p className="text-zinc-500 text-sm">Click a plan to select it, then fill out the form below.</p>
         </div>
 
-        {loading ? (
-          <div className="flex items-center justify-center py-24 gap-3">
-            <div className="w-6 h-6 border-2 border-amber-500 border-t-transparent rounded-full animate-spin" />
-            <span className="text-zinc-500 text-sm">Loading plans...</span>
-          </div>
-        ) : (
-          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {plans.map((plan) => (
-              <PlanCard
-                key={plan.id}
-                plan={plan}
-                selected={selectedPlan === plan.id}
-                onClick={setSelectedPlan}
-              />
-            ))}
-          </div>
-        )}
+        <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
+          {plans.map((plan) => (
+            <PlanCard
+              key={plan.id}
+              plan={plan}
+              selected={selectedPlan === plan.id}
+              onClick={setSelectedPlan}
+            />
+          ))}
+        </div>
       </section>
 
-      {/* ── Request Form ────────────────────────────────────────── */}
-      <section className="max-w-2xl mx-auto px-6 pb-28 md:pb-20">
+      {/* ── Request Form ─────────────────────────────────────────────────── */}
+      <section id="request-form" className="max-w-2xl mx-auto px-6 pb-28 md:pb-20">
+
         {/* Sticky selected-plan pill */}
         {selectedPlanData && (
-          <div className="sticky top-20 z-10 mb-6 flex justify-center">
-            <div className="inline-flex items-center gap-3 bg-zinc-900/90 backdrop-blur-md border border-amber-500/30 rounded-full px-5 py-2.5 shadow-lg">
-              <span className="text-amber-400">{icons[selectedPlan] || icons.spotlight}</span>
+          <div className="sticky top-20 z-10 mb-6 flex justify-center pointer-events-none">
+            <div className="inline-flex items-center gap-3 bg-zinc-900/95 backdrop-blur-md border border-amber-500/30 rounded-full px-5 py-2.5 shadow-xl pointer-events-auto">
+              <span className="text-amber-400">{icons[selectedPlan]}</span>
               <span className="text-white font-bold text-sm">{selectedPlanData.title}</span>
-              <span className="text-amber-400 font-black text-sm">{selectedPlanData.price}</span>
+              <span className="text-amber-400 font-black text-sm">— {selectedPlanData.price}</span>
             </div>
           </div>
         )}
 
         <div className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800 rounded-[2rem] p-8 shadow-2xl">
           {submitted ? (
+            /* ── Success state ─── */
             <div className="text-center py-8">
               <div className="text-6xl mb-4">🎉</div>
               <h3 className="text-2xl font-black text-white mb-2">Request Received!</h3>
-              <p className="text-zinc-400 mb-2">
+              <p className="text-zinc-400 mb-1">
                 Our team will contact{" "}
                 <span className="text-amber-400 font-bold">{form.contactName || "you"}</span> within 24 hours.
               </p>
               <p className="text-zinc-500 text-sm mb-8">
-                Venue: <span className="text-white font-semibold">{form.venueName}</span>
+                Venue: <span className="text-white font-semibold">{form.venueName}</span> ·{" "}
+                Plan: <span className="text-amber-400 font-semibold">{selectedPlanData?.title}</span>
               </p>
               <button
                 onClick={() => {
@@ -255,6 +338,7 @@ function ListYourVenue() {
               </button>
             </div>
           ) : (
+            /* ── Form ─── */
             <>
               <h3 className="text-2xl font-black text-center mb-1">Request Your Listing</h3>
               <p className="text-zinc-400 text-center text-sm mb-8">
@@ -262,10 +346,13 @@ function ListYourVenue() {
                 <span className="text-amber-400 font-bold">
                   {selectedPlanData?.title || selectedPlan}
                 </span>
+                {" · "}
+                <span className="text-amber-300">{selectedPlanData?.price}</span>
               </p>
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <input
+                  id="venue-name"
                   required
                   placeholder="Venue / Nightclub Name"
                   value={form.venueName}
@@ -273,6 +360,7 @@ function ListYourVenue() {
                   className={inputClass}
                 />
                 <input
+                  id="contact-name"
                   required
                   placeholder="Your Name (Contact Person)"
                   value={form.contactName}
@@ -281,6 +369,7 @@ function ListYourVenue() {
                 />
                 <div className="grid sm:grid-cols-2 gap-4">
                   <input
+                    id="contact-email"
                     required
                     type="email"
                     placeholder="Email Address"
@@ -289,6 +378,7 @@ function ListYourVenue() {
                     className={inputClass}
                   />
                   <input
+                    id="contact-phone"
                     required
                     type="tel"
                     placeholder="Phone Number"
@@ -298,6 +388,7 @@ function ListYourVenue() {
                   />
                 </div>
                 <textarea
+                  id="venue-message"
                   placeholder="Tell us about your venue — vibe, capacity, social handles… (optional)"
                   rows={3}
                   value={form.message}
@@ -306,8 +397,9 @@ function ListYourVenue() {
                 />
 
                 <button
+                  id="submit-listing"
                   type="submit"
-                  disabled={submitting || loading}
+                  disabled={submitting}
                   className="w-full py-4 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-600 text-black font-black text-base hover:from-amber-400 hover:to-yellow-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
                 >
                   {submitting ? (
@@ -316,7 +408,7 @@ function ListYourVenue() {
                       Submitting…
                     </span>
                   ) : (
-                    "Submit Listing Request →"
+                    `Submit Request — ${selectedPlanData?.price || ""} →`
                   )}
                 </button>
               </form>
