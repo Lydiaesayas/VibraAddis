@@ -17,6 +17,13 @@ import Reels from './pages/Reels';
 import ListYourVenue from './pages/ListYourVenue';
 import ReactGA from "react-ga4";
 import usePageTracking from './hooks/usePageTracking';
+// New user pages
+import Register from './pages/Register';
+import UserLogin from './pages/UserLogin';
+import UserProfile from './pages/UserProfile';
+import SubscriptionPlans from './pages/SubscriptionPlans';
+import Invoices from './pages/Invoices';
+import AdminAnalytics from './pages/AdminAnalytics';
 
 // Initialize Google Analytics with a placeholder Tracking ID
 ReactGA.initialize("G-XXXXXXXXXX");
@@ -24,12 +31,13 @@ ReactGA.initialize("G-XXXXXXXXXX");
 function AppContent() {
   usePageTracking();
   const location = useLocation();
-  const isAuthRoute = location.pathname === "/login" || location.pathname === "/admin";
+  const isAuthRoute = location.pathname === "/login" || location.pathname === "/admin" || location.pathname === "/user-login" || location.pathname === "/register";
   const isLandingRoute = location.pathname === "/";
   const isReelsRoute = location.pathname === "/reels";
+  const isProfileRoute = location.pathname === "/profile" || location.pathname === "/invoices" || location.pathname === "/subscriptions" || location.pathname === "/admin-analytics";
 
   const hideTopNavbar = isAuthRoute || isLandingRoute || isReelsRoute;
-  const hideBottomNavbar = isAuthRoute || isLandingRoute;
+  const hideBottomNavbar = isAuthRoute || isLandingRoute || isProfileRoute;
   const mainClass = hideTopNavbar ? "" : "pt-20";
 
   return (
@@ -48,9 +56,19 @@ function AppContent() {
           <Route path="/favorites" element={<Favorites />} />
           <Route path="/venue/:id" element={<VenueDetails />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/user-login" element={<UserLogin />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/profile" element={<UserProfile />} />
+          <Route path="/subscriptions" element={<SubscriptionPlans />} />
+          <Route path="/invoices" element={<Invoices />} />
           <Route path="/admin" element={
             <ProtectedRoute>
               <Admin />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin-analytics" element={
+            <ProtectedRoute>
+              <AdminAnalytics />
             </ProtectedRoute>
           } />
         </Routes>

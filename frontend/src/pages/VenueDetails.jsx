@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import api from "../services/api";
 import { motion, AnimatePresence } from "framer-motion";
 import VenueMap from "../components/VenueMap";
+import VideoEmbed from "../components/VideoEmbed";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { useFavorites } from "../hooks/useFavorites";
 import { WhatsappShareButton, TwitterShareButton, FacebookShareButton, WhatsappIcon, XIcon, FacebookIcon } from "react-share";
@@ -99,15 +100,7 @@ function VenueDetails() {
       {/* HERO HEADER */}
       <section className="relative h-[70vh] overflow-hidden">
         {venue.video ? (
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="absolute inset-0 w-full h-full object-cover"
-          >
-            <source src={venue.video} type="video/mp4" />
-          </video>
+          <VideoEmbed url={venue.video} className="absolute inset-0 w-full h-full" />
         ) : (
           <motion.img 
             initial={{ scale: 1.1 }}

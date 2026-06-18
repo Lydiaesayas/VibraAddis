@@ -8,10 +8,15 @@ require("dotenv").config();
 // Import routes
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
+const userRoutes = require("./routes/userRoutes");
 const venueRoutes = require("./routes/venueRoutes");
 const eventRoutes = require("./routes/eventRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
 const reservationRoutes = require("./routes/reservationRoutes");
+const paymentRoutes = require("./routes/paymentRoutes");
+const invoiceRoutes = require("./routes/invoiceRoutes");
+const analyticsRoutes = require("./routes/analyticsRoutes");
+const subscriptionExpirationRoutes = require("./routes/subscriptionExpirationRoutes");
 const { errorHandler } = require('./middleware/errorMiddleware');
 
 // Connect to database
@@ -50,11 +55,16 @@ app.use("/api/", apiLimiter);
 
 // Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
 app.use("/api/venues", venueRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/reservations", reservationRoutes);
 app.use("/api/subscriptions", require("./routes/subscriptionRoutes"));
+app.use("/api/payments", paymentRoutes);
+app.use("/api/invoices", invoiceRoutes);
+app.use("/api/analytics", analyticsRoutes);
+app.use("/api/subscriptions/expiration", subscriptionExpirationRoutes);
 
 // Test routes
 app.get("/test", (req, res) => {

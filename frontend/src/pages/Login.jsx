@@ -52,20 +52,20 @@ function Login() {
         <div className="min-h-screen bg-zinc-950 flex items-center justify-center text-white">
             <form
                 onSubmit={handleSubmit}
-                className="bg-zinc-900 p-10 rounded-3xl w-full max-w-md border border-zinc-800"
+                className="bg-zinc-900 p-10 rounded-3xl w-full max-w-md border border-zinc-800 shadow-2xl"
             >
                 <h1 className="text-4xl font-bold mb-8 text-center">
                     Admin Login
                 </h1>
 
-                {error && <p className="bg-red-400 text-center p-3 rounded mb-4 bg-red-950/30 p-3 rounded-lg">
+                {error && <p className="bg-red-950/30 border border-red-800 text-red-300 text-center p-3 rounded-xl mb-4">
                     {error}
                 </p>}
 
                 <input
                     type="email"
                     placeholder="Email"
-                    className="w-full bg-zinc-800 p-4 rounded-xl mb-5 outline-none"
+                    className="w-full bg-zinc-800 p-4 rounded-xl mb-5 outline-none border border-zinc-700 focus:border-purple-500 transition-colors"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
@@ -74,7 +74,7 @@ function Login() {
                     <input
                         type={showPassword ? "text" : "password"}
                         placeholder="password"
-                        className="w-full bg-zinc-800 p-4 rounded-xl mb-6 outline-none"
+                        className="w-full bg-zinc-800 p-4 rounded-xl mb-6 outline-none border border-zinc-700 focus:border-purple-500 transition-colors"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
@@ -103,7 +103,7 @@ function Login() {
                 <button
                     type="submit"
                     disabled={loading}
-                    className={`w-full bg-blue-600 hover:bg-purple-700 transition p-4 rounded-xl font-semibold ${loading ? "opacity-50 cursor-not-allowed" : ""}`}>
+                    className={`w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 transition p-4 rounded-xl font-semibold ${loading ? "opacity-50 cursor-not-allowed" : ""}`}>
                     {loading ? "Loading..." : "Login"}
                 </button>
             </form>

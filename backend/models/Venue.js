@@ -77,10 +77,17 @@ const venueSchema = new mongoose.Schema(
             default: true,
         },
         listingExpiresAt: Date,
+        expirationReminderSent: {
+            type: Boolean,
+            default: false,
+        },
     },
     {
         timestamps: true,
     }
 )
+
+// Index for expiration queries
+venueSchema.index({ listingExpiresAt: 1, listingStatus: 1 });
 
 module.exports = mongoose.model('Venue', venueSchema)

@@ -1,12 +1,21 @@
 const mongoose = require('mongoose')
 
-const adminSchema = new mongoose.Schema(
+const userSchema = new mongoose.Schema(
     {
+        name: {
+            type: String,
+            required: true,
+            trim: true
+        },
         email: {
             type: String,
             required: true,
             unique: true,
             lowercase: true,
+            trim: true
+        },
+        phone: {
+            type: String,
             trim: true
         },
         password: {
@@ -22,15 +31,22 @@ const adminSchema = new mongoose.Schema(
                 message: 'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&)'
             }
         },
-        role: {
-            type: String,
-            default: 'admin',
-        },
+        favorites: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Venue'
+        }],
         refreshToken: {
+            type: String,
+        },
+        isVerified: {
+            type: Boolean,
+            default: false
+        },
+        verificationToken: {
             type: String,
         }
     },
     { timestamps: true }
 )
 
-module.exports = mongoose.model('Admin', adminSchema)
+module.exports = mongoose.model('User', userSchema)

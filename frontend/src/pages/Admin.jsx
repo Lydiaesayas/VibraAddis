@@ -105,7 +105,7 @@ function Admin() {
     }
     if (loading) {
         return (
-            <div className="min-h-screen bg-gray-950 text-white flex items-center justify-center">
+            <div className="min-h-screen bg-zinc-950 text-white flex items-center justify-center">
                 <p className="text-xl">Loading venues...</p>
             </div>
         );
@@ -115,7 +115,7 @@ function Admin() {
     venue.name.toLowerCase().includes(search.toLowerCase()) 
 )
     return (
-        <div className="min-h-screen bg-gray-950 text-white p-10">
+        <div className="min-h-screen bg-zinc-950 text-white p-10">
             <div className="max-w-7xl mx-auto">
                  <div className="flex items-center justify-between mb-10">
                     <div className="mb-10">
