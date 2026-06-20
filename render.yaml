@@ -47,12 +47,10 @@ services:
         sync: false
 
   # Frontend Service
-  - type: web
+  - type: static
     name: vibraaddis-frontend
-    env: node
-    plan: free
     buildCommand: cd frontend && npm install && npm run build
-    startCommand: cd frontend && npm run preview
+    staticPublishPath: frontend/dist
     envVars:
       - key: VITE_API_URL
         value: https://vibraaddis-backend.onrender.com/api
