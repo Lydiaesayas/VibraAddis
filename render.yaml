@@ -47,7 +47,7 @@ services:
         sync: false
 
   # Frontend Service
-  - type: static
+  - type: static_site
     name: vibraaddis-frontend
     buildCommand: cd frontend && npm install && npm run build
     staticPublishPath: frontend/dist
