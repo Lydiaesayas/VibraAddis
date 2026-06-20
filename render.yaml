@@ -3,6 +3,7 @@ services:
   - type: web
     name: vibraaddis-backend
     env: node
+    plan: free
     buildCommand: cd backend && npm install
     startCommand: cd backend && node server.js
     envVars:
@@ -49,6 +50,7 @@ services:
   - type: web
     name: vibraaddis-frontend
     env: node
+    plan: free
     buildCommand: cd frontend && npm install && npm run build
     startCommand: cd frontend && npm run preview
     envVars:
