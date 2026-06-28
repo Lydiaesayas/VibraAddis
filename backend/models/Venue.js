@@ -6,6 +6,10 @@ const venueSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        owner: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+        },
         category: {
             type: String,
             enum: ['nightclub', 'traditional Cultural Restaurant'],

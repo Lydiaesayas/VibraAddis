@@ -9,8 +9,11 @@ const {
     updateUserProfile,
     addFavorite,
     removeFavorite,
-    logoutUser
+    logoutUser,
+    getAllUsers
 } = require('../controllers/userController')
+
+const { adminOnly } = require('../middleware/authMiddleware')
 
 // Public routes
 router.post('/register', registerUser)
@@ -23,5 +26,8 @@ router.get('/profile', protect, getUserProfile)
 router.put('/profile', protect, updateUserProfile)
 router.post('/favorites', protect, addFavorite)
 router.delete('/favorites/:venueId', protect, removeFavorite)
+
+// Admin routes
+router.get('/admin/all', protect, adminOnly, getAllUsers)
 
 module.exports = router

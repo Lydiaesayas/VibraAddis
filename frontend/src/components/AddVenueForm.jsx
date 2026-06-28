@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import api from '../services/api';
 
 function AddVenueForm({ onVenueAdded }) {
+    const [users, setUsers] = useState([]);
     const [formData, setFormData] = useState({
         name: '',
         category: '',
@@ -12,7 +13,20 @@ function AddVenueForm({ onVenueAdded }) {
         website: '',
         description: '',
         video: '',
-    })
+        owner: '',
+    });
+
+    useEffect(() => {
+        const fetchUsers = async () => {
+            try {
+                const res = await api.get('/users/admin/all');
+                setUsers(res.data);
+            } catch (err) {
+                console.error('Failed to load users for owner assignment', err);
+            }
+        };
+        fetchUsers();
+    }, []);
 
     const handleChange = (e) => {
         if (e.target.name === 'image') {
@@ -43,6 +57,9 @@ function AddVenueForm({ onVenueAdded }) {
             data.append('website', formData.website);
             data.append('description', formData.description);
             data.append('video', formData.video);
+            if (formData.owner) {
+                data.append('owner', formData.owner);
+            }
 
             if (formData.image) {
                 data.append('image', formData.image);
@@ -65,6 +82,7 @@ function AddVenueForm({ onVenueAdded }) {
                 website: '',
                 description: '',
                 video: '',
+                owner: '',
             });
         } catch (error) {
             console.error('Error adding venue:', error);
@@ -140,6 +158,19 @@ function AddVenueForm({ onVenueAdded }) {
                   onChange={handleChange}
                  className="bg-zinc-800 p-4 rounded-xl outline-none"
                 />
+                <select
+                    name="owner"
+                    value={formData.owner}
+                    onChange={handleChange}
+                    className="bg-zinc-800 p-4 rounded-xl outline-none"
+                >
+                    <option value="">Select Owner (Optional)</option>
+                    {users.map(user => (
+                        <option key={user._id} value={user._id}>
+                            {user.name} ({user.email})
+                        </option>
+                    ))}
+                </select>
                 <input 
                  type="text"
                  name="video"

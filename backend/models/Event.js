@@ -15,7 +15,19 @@ const eventSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-
+    venueId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Venue',
+    },
+    owner: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+    },
+    paymentStatus: {
+        type: String,
+        enum: ['pending', 'completed'],
+        default: 'pending',
+    },
     image: {
         type: String,
         required: true,

@@ -4,6 +4,8 @@ const { protect, adminOnly } = require('../middleware/authMiddleware')
 const {
     initializePayment,
     verifyPayment,
+    initializeEventPayment,
+    verifyEventPayment,
     getPayment,
     getAllPayments,
     getPaymentStats,
@@ -12,9 +14,11 @@ const {
 
 // Public routes (for payment gateway callbacks)
 router.post('/verify', verifyPayment)
+router.post('/event/verify', verifyEventPayment)
 
 // Protected routes
 router.post('/initialize', protect, initializePayment)
+router.post('/event/initialize', protect, initializeEventPayment)
 router.get('/:id', protect, getPayment)
 
 // Admin only routes

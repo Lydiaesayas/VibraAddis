@@ -3,6 +3,7 @@ const router = express.Router();
 const {
     getVenues,
     getAllVenuesAdmin,
+    getMyVenues,
     getVenueById,
     getReelsFeed,
     createVenue,
@@ -14,6 +15,7 @@ const upload = require('../middleware/uploadMiddleware');
 
 router.get('/reels/feed', getReelsFeed);
 router.get('/admin/all', protect, getAllVenuesAdmin);
+router.get('/owner/my-venues', protect, getMyVenues);
 
 router.route('/')
     .get(getVenues)

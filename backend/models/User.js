@@ -35,6 +35,11 @@ const userSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Venue'
         }],
+        role: {
+            type: String,
+            enum: ['user', 'owner', 'admin'],
+            default: 'user'
+        },
         refreshToken: {
             type: String,
         },

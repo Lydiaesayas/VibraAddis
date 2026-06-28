@@ -1,5 +1,17 @@
 const Venue = require('../models/Venue');
 
+// @desc    Get all venues for an owner
+// @route   GET /api/venues/owner/my-venues
+// @access  Private
+const getMyVenues = async (req, res, next) => {
+    try {
+        const venues = await Venue.find({ owner: req.user.id }).sort({ createdAt: -1 });
+        res.json(venues);
+    } catch (error) {
+        next(error);
+    }
+};
+
 // @desc    Get all venues for admin (includes unpublished)
 // @route   GET /api/venues/admin/all
 // @access  Private
@@ -201,6 +213,7 @@ const deleteVenue = async (req, res, next) => {
 module.exports = {
     getVenues,
     getAllVenuesAdmin,
+    getMyVenues,
     getVenueById,
     getReelsFeed,
     createVenue,

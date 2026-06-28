@@ -24,6 +24,7 @@ import UserProfile from './pages/UserProfile';
 import SubscriptionPlans from './pages/SubscriptionPlans';
 import Invoices from './pages/Invoices';
 import AdminAnalytics from './pages/AdminAnalytics';
+import OwnerDashboard from './pages/OwnerDashboard';
 
 // Initialize Google Analytics with a placeholder Tracking ID
 ReactGA.initialize("G-XXXXXXXXXX");
@@ -34,7 +35,7 @@ function AppContent() {
   const isAuthRoute = location.pathname === "/login" || location.pathname === "/admin" || location.pathname === "/user-login" || location.pathname === "/register";
   const isLandingRoute = location.pathname === "/";
   const isReelsRoute = location.pathname === "/reels";
-  const isProfileRoute = location.pathname === "/profile" || location.pathname === "/invoices" || location.pathname === "/subscriptions" || location.pathname === "/admin-analytics";
+  const isProfileRoute = location.pathname === "/profile" || location.pathname === "/invoices" || location.pathname === "/subscriptions" || location.pathname === "/admin-analytics" || location.pathname === "/owner";
 
   const hideTopNavbar = isAuthRoute || isLandingRoute || isReelsRoute;
   const hideBottomNavbar = isAuthRoute || isLandingRoute || isProfileRoute;
@@ -69,6 +70,11 @@ function AppContent() {
           <Route path="/admin-analytics" element={
             <ProtectedRoute>
               <AdminAnalytics />
+            </ProtectedRoute>
+          } />
+          <Route path="/owner" element={
+            <ProtectedRoute>
+              <OwnerDashboard />
             </ProtectedRoute>
           } />
         </Routes>

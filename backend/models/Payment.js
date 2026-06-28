@@ -4,8 +4,11 @@ const paymentSchema = new mongoose.Schema(
     {
         subscriptionId: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'ListingSubscription',
-            required: true
+            ref: 'ListingSubscription'
+        },
+        eventId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Event'
         },
         venueId: {
             type: mongoose.Schema.Types.ObjectId,

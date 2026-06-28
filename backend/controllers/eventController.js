@@ -58,10 +58,37 @@ const getEventById = async (req, res, next) => {
 
 // @desc    Create an event
 // @route   POST /api/events
-// @access  Private (Admin)
+// @access  Private (Owner/Admin)
 const createEvent = async (req, res, next) => {
     try {
-        const newEvent = new Event(req.body);
+        const { title, artist, venueId, image, description, date, time } = req.body;
+        
+        // Find venue
+        const Venue = require('../models/Venue');
+        const venueDoc = await Venue.findById(venueId);
+        if (!venueDoc) {
+            return res.status(404).json({ message: 'Venue not found' });
+        }
+
+        // We assume req.user is populated by protect middleware
+        // Only allow owners who own the venue or admins
+        if (req.user.role !== 'admin' && venueDoc.owner?.toString() !== req.user.id) {
+            return res.status(403).json({ message: 'Not authorized to create event for this venue' });
+        }
+
+        const newEvent = new Event({
+            title,
+            artist,
+            venue: venueDoc.name, // Keep for backwards compatibility
+            venueId,
+            image,
+            description,
+            date,
+            time,
+            owner: req.user.id,
+            paymentStatus: 'pending' // Default is pending until payment is made
+        });
+        
         const savedEvent = await newEvent.save();
         res.status(201).json(savedEvent);
     } catch (error) {

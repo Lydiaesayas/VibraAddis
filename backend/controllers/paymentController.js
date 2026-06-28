@@ -201,9 +201,83 @@ const refundPayment = async (req, res) => {
     }
 };
 
+// Initialize event payment
+const initializeEventPayment = async (req, res) => {
+    try {
+        const { eventId, paymentMethod } = req.body;
+        const Event = require('../models/Event');
+
+        const event = await Event.findById(eventId);
+        if (!event) {
+            return res.status(404).json({ message: 'Event not found' });
+        }
+
+        // Set fixed fee for event publishing (e.g., 500 ETB)
+        const amount = 500;
+
+        const payment = await Payment.create({
+            eventId,
+            amount,
+            currency: 'ETB',
+            paymentMethod,
+            paymentStatus: 'pending',
+            transactionId: generateTransactionId(),
+            notes: `Payment for publishing event: ${event.title}`
+        });
+
+        res.json({
+            paymentId: payment._id,
+            transactionId: payment.transactionId,
+            amount: payment.amount,
+            currency: payment.currency,
+            paymentMethod: payment.paymentMethod,
+            paymentGatewayUrl: `https://mock-payment-gateway.com/pay/${payment.transactionId}`,
+            expiresIn: 900
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// Verify event payment
+const verifyEventPayment = async (req, res) => {
+    try {
+        const { transactionId, paymentGatewayResponse } = req.body;
+
+        const payment = await Payment.findOne({ transactionId });
+        if (!payment) {
+            return res.status(404).json({ message: 'Payment not found' });
+        }
+
+        payment.paymentStatus = 'completed';
+        payment.paymentGatewayResponse = paymentGatewayResponse;
+        payment.paidAt = new Date();
+        await payment.save();
+
+        const Event = require('../models/Event');
+        const event = await Event.findById(payment.eventId);
+        if (event) {
+            event.paymentStatus = 'completed';
+            await event.save();
+        }
+
+        res.json({
+            paymentId: payment._id,
+            transactionId: payment.transactionId,
+            paymentStatus: payment.paymentStatus,
+            invoiceNumber: payment.invoiceNumber,
+            paidAt: payment.paidAt
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 module.exports = {
     initializePayment,
     verifyPayment,
+    initializeEventPayment,
+    verifyEventPayment,
     getPayment,
     getAllPayments,
     getPaymentStats,
