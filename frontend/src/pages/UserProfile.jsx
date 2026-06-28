@@ -94,12 +94,22 @@ const UserProfile = () => {
                     <h1 className="text-4xl font-bold">
                         My <span className="text-purple-500">Profile</span>
                     </h1>
-                    <button
-                        onClick={handleLogout}
-                        className="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-xl transition"
-                    >
-                        Logout
-                    </button>
+                    <div className="flex gap-4">
+                        {user?.role === 'owner' && (
+                            <button
+                                onClick={() => navigate('/owner')}
+                                className="bg-amber-500 text-black hover:bg-amber-400 font-bold px-6 py-2 rounded-xl transition"
+                            >
+                                Owner Dashboard
+                            </button>
+                        )}
+                        <button
+                            onClick={handleLogout}
+                            className="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-xl transition"
+                        >
+                            Logout
+                        </button>
+                    </div>
                 </div>
 
                 {/* Profile Information */}
