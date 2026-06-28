@@ -157,6 +157,13 @@ const createVenue = async (req, res, next) => {
         
         const newVenue = new Venue(req.body);
         const savedVenue = await newVenue.save();
+        
+        // If an owner is assigned, update their role to 'owner'
+        if (req.body.owner) {
+            const User = require('../models/User');
+            await User.findByIdAndUpdate(req.body.owner, { role: 'owner' });
+        }
+
         res.status(201).json(savedVenue);
     } catch (error) {
         next(error);
@@ -187,6 +194,13 @@ const updateVenue = async (req, res, next) => {
             res.status(404);
             throw new Error('Venue not found');
         }
+
+        // If an owner is assigned, update their role to 'owner'
+        if (req.body.owner) {
+            const User = require('../models/User');
+            await User.findByIdAndUpdate(req.body.owner, { role: 'owner' });
+        }
+
         res.json(updatedVenue);
     } catch (error) {
         next(error);
